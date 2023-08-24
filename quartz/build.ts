@@ -18,7 +18,7 @@ import { trace } from "./util/trace"
 import { options } from "./util/sourcemap"
 import { Mutex } from "async-mutex"
 
-async function buildQuartz(argv: Argv, mut: Mutex, clientRefresh: () => void) {
+async function buildQuartz(argv: Argv, clientRefresh: () => void) {
   const ctx: BuildCtx = {
     argv,
     cfg,
@@ -38,7 +38,6 @@ async function buildQuartz(argv: Argv, mut: Mutex, clientRefresh: () => void) {
     console.log(`  Emitters: ${pluginNames("emitters").join(", ")}`)
   }
 
-  const release = await mut.acquire()
   perf.addEvent("clean")
   await rimraf(output)
   console.log(`Cleaned output directory \`${output}\` in ${perf.timeSince("clean")}`)
@@ -57,17 +56,15 @@ async function buildQuartz(argv: Argv, mut: Mutex, clientRefresh: () => void) {
   const filteredContent = filterContent(ctx, parsedFiles)
   await emitContent(ctx, filteredContent)
   console.log(chalk.green(`Done processing ${fps.length} files in ${perf.timeSince()}`))
-  release()
 
   if (argv.serve) {
-    return startServing(ctx, mut, parsedFiles, clientRefresh)
+    return startServing(ctx, parsedFiles, clientRefresh)
   }
 }
 
 // setup watcher for rebuilds
 async function startServing(
   ctx: BuildCtx,
-  mut: Mutex,
   initialContent: ProcessedContent[],
   clientRefresh: () => void,
 ) {
@@ -81,7 +78,8 @@ async function startServing(
   }
 
   const initialSlugs = ctx.allSlugs
-  let lastBuildMs = 0
+  const buildMutex = new Mutex()
+  const timeoutIds: Set<ReturnType<typeof setTimeout>> = new Set()
   const toRebuild: Set<FilePath> = new Set()
   const toRemove: Set<FilePath> = new Set()
   const trackedAssets: Set<FilePath> = new Set()
@@ -111,50 +109,49 @@ async function startServing(
     }
 
     // debounce rebuilds every 250ms
+    timeoutIds.add(
+      setTimeout(async () => {
+        const release = await buildMutex.acquire()
+        timeoutIds.forEach((id) => clearTimeout(id))
+        timeoutIds.clear()
 
-    const buildStart = new Date().getTime()
-    lastBuildMs = buildStart
-    const release = await mut.acquire()
-    if (lastBuildMs > buildStart) {
-      release()
-      return
-    }
+        const perf = new PerfTimer()
+        console.log(chalk.yellow("Detected change, rebuilding..."))
+        try {
+          const filesToRebuild = [...toRebuild].filter((fp) => !toRemove.has(fp))
 
-    const perf = new PerfTimer()
-    console.log(chalk.yellow("Detected change, rebuilding..."))
-    try {
-      const filesToRebuild = [...toRebuild].filter((fp) => !toRemove.has(fp))
+          const trackedSlugs = [...new Set([...contentMap.keys(), ...toRebuild, ...trackedAssets])]
+            .filter((fp) => !toRemove.has(fp))
+            .map((fp) => slugifyFilePath(path.posix.relative(argv.directory, fp) as FilePath))
 
-      const trackedSlugs = [...new Set([...contentMap.keys(), ...toRebuild, ...trackedAssets])]
-        .filter((fp) => !toRemove.has(fp))
-        .map((fp) => slugifyFilePath(path.posix.relative(argv.directory, fp) as FilePath))
+          ctx.allSlugs = [...new Set([...initialSlugs, ...trackedSlugs])]
+          const parsedContent = await parseMarkdown(ctx, filesToRebuild)
+          for (const content of parsedContent) {
+            const [_tree, vfile] = content
+            contentMap.set(vfile.data.filePath!, content)
+          }
 
-      ctx.allSlugs = [...new Set([...initialSlugs, ...trackedSlugs])]
-      const parsedContent = await parseMarkdown(ctx, filesToRebuild)
-      for (const content of parsedContent) {
-        const [_tree, vfile] = content
-        contentMap.set(vfile.data.filePath!, content)
-      }
+          for (const fp of toRemove) {
+            contentMap.delete(fp)
+          }
 
-      for (const fp of toRemove) {
-        contentMap.delete(fp)
-      }
+          // TODO: we can probably traverse the link graph to figure out what's safe to delete here
+          // instead of just deleting everything
+          await rimraf(argv.output)
+          const parsedFiles = [...contentMap.values()]
+          const filteredContent = filterContent(ctx, parsedFiles)
+          await emitContent(ctx, filteredContent)
+          console.log(chalk.green(`Done rebuilding in ${perf.timeSince()}`))
+        } catch {
+          console.log(chalk.yellow(`Rebuild failed. Waiting on a change to fix the error...`))
+        }
 
-      const parsedFiles = [...contentMap.values()]
-      const filteredContent = filterContent(ctx, parsedFiles)
-      // TODO: we can probably traverse the link graph to figure out what's safe to delete here
-      // instead of just deleting everything
-      await rimraf(argv.output)
-      await emitContent(ctx, filteredContent)
-      console.log(chalk.green(`Done rebuilding in ${perf.timeSince()}`))
-    } catch {
-      console.log(chalk.yellow(`Rebuild failed. Waiting on a change to fix the error...`))
-    }
-
-    clientRefresh()
-    toRebuild.clear()
-    toRemove.clear()
-    release()
+        clientRefresh()
+        toRebuild.clear()
+        toRemove.clear()
+        release()
+      }, 250),
+    )
   }
 
   const watcher = chokidar.watch(".", {
@@ -167,15 +164,11 @@ async function startServing(
     .on("add", (fp) => rebuild(fp, "add"))
     .on("change", (fp) => rebuild(fp, "change"))
     .on("unlink", (fp) => rebuild(fp, "delete"))
-
-  return async () => {
-    await watcher.close()
-  }
 }
 
-export default async (argv: Argv, mut: Mutex, clientRefresh: () => void) => {
+export default async (argv: Argv, clientRefresh: () => void) => {
   try {
-    return await buildQuartz(argv, mut, clientRefresh)
+    return await buildQuartz(argv, clientRefresh)
   } catch (err) {
     trace("\nExiting Quartz due to a fatal error", err as Error)
   }

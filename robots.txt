@@ -1,0 +1,25 @@
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: BraveBot
+Allow: /
+
+User-agent: Kagi
+Allow: /
+
+User-agent: KagiBot
+Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: *
+Disallow: /
+
+Sitemap: https://ztk.jskherman.com/sitemap.xml

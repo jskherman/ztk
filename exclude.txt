@@ -1,0 +1,13 @@
+.git/**
+.obsidian/**
+.stfolder/**
+.smart-connections/**
+.trash/**
+.vscode/**
+001.assets/**
+101.journal/**
+102.personal/**
+/.editorconfig
+/.export-ignore
+/.gitignore
+/.stignore

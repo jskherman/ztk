@@ -7,8 +7,10 @@ export const sharedPageComponents: SharedLayout = {
   header: [],
   footer: Component.Footer({
     links: {
-      GitHub: "https://github.com/jackyzha0/quartz",
-      "Discord Community": "https://discord.gg/cRFFHYye7t",
+      "Website": "https://jskherman.com",
+      "GitHub": "https://github.com/jskherman/ztk",
+      "RSS": "https://ztk.jskherman.com/index.xml",
+      "Copyright Notice": "https://ztk.jskherman.com/Copyright-notice",
     },
   }),
 }
@@ -21,6 +23,7 @@ export const defaultContentPageLayout: PageLayout = {
     Component.MobileOnly(Component.Spacer()),
     Component.Search(),
     Component.Darkmode(),
+    Component.DesktopOnly(Component.RecentNotes()),
     Component.DesktopOnly(Component.TableOfContents()),
   ],
   right: [Component.Graph(), Component.Backlinks()],
@@ -34,6 +37,7 @@ export const defaultListPageLayout: PageLayout = {
     Component.MobileOnly(Component.Spacer()),
     Component.Search(),
     Component.Darkmode(),
+    Component.DesktopOnly(Component.RecentNotes())
   ],
-  right: [],
+  right: [Component.Graph()],
 }

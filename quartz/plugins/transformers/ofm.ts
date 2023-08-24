@@ -116,7 +116,7 @@ const calloutRegex = new RegExp(/^\[\!(\w+)\]([+-]?)/)
 const calloutLineRegex = new RegExp(/^> *\[\!\w+\][+-]?.*$/, "gm")
 // (?:^| )   -> non-capturing group, tag should start be separated by a space or be the start of the line
 // #(\w+)    -> tag itself is # followed by a string of alpha-numeric characters
-const tagRegex = new RegExp(/(?:^| )#(\p{L}+)/, "gu")
+const tagRegex = new RegExp(/(?:^| )#([\w-_\/]+)/, "g")
 
 export const ObsidianFlavoredMarkdown: QuartzTransformerPlugin<Partial<Options> | undefined> = (
   userOpts,
@@ -382,8 +382,8 @@ export const ObsidianFlavoredMarkdown: QuartzTransformerPlugin<Partial<Options> 
         plugins.push(() => {
           return (tree: Root, file) => {
             const base = pathToRoot(file.data.slug!)
-            findAndReplace(tree, tagRegex, (_value: string, tag: string) => {
-              if (file.data.frontmatter && !file.data.frontmatter.tags.includes(tag)) {
+            findAndReplace(tree, tagRegex, (value: string, tag: string) => {
+              if (file.data.frontmatter) {
                 file.data.frontmatter.tags.push(tag)
               }
 
@@ -398,7 +398,7 @@ export const ObsidianFlavoredMarkdown: QuartzTransformerPlugin<Partial<Options> 
                 children: [
                   {
                     type: "text",
-                    value: `#${tag}`,
+                    value,
                   },
                 ],
               }

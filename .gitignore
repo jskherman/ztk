@@ -1,3 +1,4 @@
+# Original gitignore
 .DS_Store
 .gitignore
 node_modules
@@ -5,5 +6,38 @@ public
 prof
 tsconfig.tsbuildinfo
 .obsidian
+.trash
 .quartz-cache
 private/
+
+# Custom gitignore
+
+## Folders
+/content/
+
+## File types
+### Images
+*.pdf
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.ico
+*.tif
+*.tiff
+*.bmp
+*.webp
+
+### Videos
+*.mp4
+*.mov
+*.avi
+*.wmv
+*.mkv
+*.flv
+*.webm
+
+### Archives
+*.7z
+*.zip
+*.rar

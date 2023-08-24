@@ -1,1 +1,41 @@
 // put your custom CSS here!
+
+// override variables from quartz\styles\variables.scss
+
+// HTML tags
+cite::before {
+    content: "—";
+}
+
+// Tags
+.recent-notes .tags {
+    flex-flow: wrap; // Avoid tags from clipping through the page
+}
+
+// Overall tags syling + note title
+body[data-slug^="tags"] .section {
+    // Evenly space title and tags column space
+    grid-template-columns: 6em 3fr 3fr !important;
+
+    // Avoid tags from clipping through the page
+    & .tags {
+        flex-flow: wrap;
+    }
+}
+
+
+
+// Overflow scrollbar
+.left,
+.right {
+    overflow-y: auto !important;
+
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none; // IE and Edge
+    scrollbar-width: none; // Firefox
+
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}

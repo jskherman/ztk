@@ -25,6 +25,11 @@ export default ((userOpts?: Partial<Options>) => {
   const opts = { ...defaultOptions, ...userOpts }
   function RecentNotes(props: QuartzComponentProps) {
     const { allFiles, fileData, displayClass } = props
+
+    if ((fileData.slug !== "index") && (fileData.slug !== "tags/index")) {
+      return <></>
+    }
+
     const pages = allFiles.filter(opts.filter).sort(opts.sort)
     const remaining = Math.max(0, pages.length - opts.limit)
     return (
