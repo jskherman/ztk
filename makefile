@@ -15,7 +15,7 @@ sync: 		## Sync notes from vault to content folder
 	copy "robots.txt" "content/robots.txt"
 
 deploy: 	## Deploy to Cloudflare Pages
-	wrangler pages deploy public --project-name ztk --commit-dirty=true
+	wrangler pages deploy public --project-name jskztk --commit-dirty=true
 
 publish:	## Build, sync, commit, and deploy
 	make sync
