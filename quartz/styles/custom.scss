@@ -23,6 +23,9 @@ body[data-slug^="tags"] .section {
     }
 }
 
+.center>.page-header>.popover-hint>ul.tags {
+    flex-flow: wrap; // Avoid tags from clipping through the page
+}
 
 
 // Overflow scrollbar
