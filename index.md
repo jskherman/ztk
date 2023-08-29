@@ -11,6 +11,14 @@ Here, I write down my thoughts and notes on things I'm learning about.
 This is where I put [ideas in to be forgotten](https://news.ycombinator.com/item?id=36136179)[^2] but which I also deem important enough to write down.
 I use [Obsidian](https://obsidian.md) to help me manage these notes, and I use [Quartz](https://quartz.jzhao.xyz) to publish them to the web.[^3]
 
+> [!CAUTION]+ Disclaimer
+>
+> This is a **work in progress _aeternum_**.
+>
+> I may change my mind and I reserve the right to be wrong about what I write here.
+> Approach everything here with skepticism.
+> My views do not necessarily represent my affiliations' opinions.
+
 ## Quick links
 
 - [[Copyright notice]]: This note details the terms under which I license my notes and the code that powers this site.
