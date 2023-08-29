@@ -4,6 +4,7 @@ import * as Plugin from "./quartz/plugins"
 const config: QuartzConfig = {
   configuration: {
     pageTitle: "ZTK",
+    pageSubtitle: "Hyperlink MAXIMALISM through networked ideas.",
     enableSPA: true,
     enablePopovers: true,
     analytics: null, // {
