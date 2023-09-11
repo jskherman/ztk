@@ -6,7 +6,7 @@ def sync_notes():
     """
     Syncs the notes from the source path to the destination path.
     """
-    source_path = r"E:\OneDrive\Documents\Basecamp\(P--) Personal\(PN-) Notes\(PN2) Current\(PN2 KN) Knowledge"
+    source_path = r"E:\OneDrive\z"
     destination_path = r"E:\OneDrive\Documents\Basecamp\(H--) Hobbies, Extracurriculars\(HA-) Code Playground\(HA2) Web Sites, Technologies\(HA2 PZ) Public Zettelkasten\content"
 
     command = f"rclone sync -P '{source_path}' '{destination_path}' --exclude-from exclude.txt"
@@ -17,13 +17,13 @@ def sync_notes():
         check=True,
     )
 
-    assets_path = r"E:\OneDrive\Documents\Basecamp\(H--) Hobbies, Extracurriculars\(HA-) Code Playground\(HA2) Web Sites, Technologies\(HA2 PZ) Public Zettelkasten\content\001.assets\media"
+    assets_path = r"E:\OneDrive\Documents\Basecamp\(H--) Hobbies, Extracurriculars\(HA-) Code Playground\(HA2) Web Sites, Technologies\(HA2 PZ) Public Zettelkasten\content\0B-media"
 
     subprocess.run(
         [
             "powershell.exe",
             "-Command",
-            f"rclone sync -P '{source_path}\\001.assets\\media' '{assets_path}'",
+            f"rclone sync -P '{source_path}\\0B-media' '{assets_path}'",
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
