@@ -21,11 +21,11 @@ PageTitle.css = `
 }
 
 .subtitle {
-  margin: 0;
-  font-size: 9pt;
-  font-weight: 400;
-  font-family: var(--bodyFont);
-  color: var(--gray);
+  margin: 0 !important;
+  font-size: 9pt !important;
+  font-weight: 400 !important;
+  font-family: var(--bodyFont) !important;
+  color: var(--gray) !important;
 }
 `
 
