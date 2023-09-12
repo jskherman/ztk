@@ -42,3 +42,37 @@ body[data-slug^="tags"] .section {
         display: none;
     }
 }
+
+mark,
+mark.yellow,
+mark.y {
+    background-color: rgba(250, 250, 100, 0.7);
+    padding: 0 0.1em;
+    margin: 0 -0.1em;
+    border-radius: 0.3em;
+}
+
+mark.red,
+mark.r {
+    background-color: rgba(255, 100, 100, 0.7);
+}
+
+mark.green,
+mark.g {
+    background-color: rgba(0, 255, 0, 0.7)
+}
+
+mark.blue,
+mark.b {
+    background-color: rgba(0, 255, 255, 0.7);
+}
+
+mark.orange,
+mark.o {
+    background-color: rgba(255, 165, 0, 0.7);
+}
+
+mark.violet,
+mark.v {
+    background-color: rgba(255, 0, 255, 0.7);
+}
