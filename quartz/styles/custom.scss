@@ -76,3 +76,8 @@ mark.violet,
 mark.v {
     background-color: rgba(255, 0, 255, 0.7);
 }
+
+.page ul>li>p,
+.page ol>li>p {
+    margin-bottom: 1em;
+}
